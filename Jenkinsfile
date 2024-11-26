@@ -1,14 +1,12 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:latest'
-            args '-u root'
-        }
+    agent any
+    environment {
+        IMAGE_NAME = 'iorp/django_demo'
     }
     stages {
-        stage("deps") {
+        stage("build") {
             steps {
-                sh 'pip install -r requirements.txt'
+                sh 'docker build . -t ${IMAGE_NAME}:${GIT_COMMIT} -t ${IMAGE_NAME}:latest'
             }
         }
     }
