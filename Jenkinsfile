@@ -1,12 +1,29 @@
 pipeline {
     agent any
-    environment {
-        IMAGE_NAME = 'iorp/django_demo'
-    }
-    stages {
-        stage("build") {
-            steps {
-                sh 'docker build . -t ${IMAGE_NAME}:${GIT_COMMIT} -t ${IMAGE_NAME}:latest'
+        stages {
+            stage('build') {
+                steps {
+                    script {
+                    def output = sh(returnStdout: true, script: 'echo $(echo $GIT_BRANCH   | sed -e "s|origin/||g")')
+                     GIT_LOCAL_BRANCH="${output}"
+                }
+                build job: '../lib/python build parametrized',
+                parameters: [
+                string(name: 'GIT_URL', value: "${GIT_URL}"),
+                string(name: 'GIT_BRANCH', value: "${GIT_LOCAL_BRANCH}")
+                ]
+            }
+            stage('test') {
+                steps {
+                    script {
+                    def output = sh(returnStdout: true, script: 'echo $(echo $GIT_BRANCH   | sed -e "s|origin/||g")')
+                     GIT_LOCAL_BRANCH="${output}"
+                }
+                build job: '../lib/python-test-parametrized',
+                parameters: [
+                string(name: 'GIT_URL', value: "${GIT_URL}"),
+                string(name: 'GIT_BRANCH', value: "${GIT_LOCAL_BRANCH}")
+                ]
             }
         }
     }
