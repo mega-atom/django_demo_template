@@ -6,10 +6,6 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                script {
-                def output = sh(returnStdout: true, script: 'echo $(echo $GIT_BRANCH   | sed -e "s|origin/||g")')
-                GIT_LOCAL_BRANCH="${output}"
-                }
                 build job: '../lib/django build parametrized',
                 parameters: [
                 string(name: 'GIT_URL', value: "${GIT_URL}"),
@@ -21,10 +17,6 @@ pipeline {
         }
         stage('test') {
             steps {
-                script {
-                def output = sh(returnStdout: true, script: 'echo $(echo $GIT_BRANCH   | sed -e "s|origin/||g")')
-                GIT_LOCAL_BRANCH="${output}"
-                }
                 build job: '../lib/django-test-parametrized',
                 parameters: [
                 string(name: 'GIT_URL', value: "${GIT_URL}"),
